@@ -8,8 +8,7 @@
 use std::fmt;
 
 const KEY_SIZE: usize = 16;
-const DICT_CAPACITY: usize = 16;
-const ENV_CAPACITY: usize = 16;
+const CAPACITY: usize = 512;
 
 pub type Key = [u8; KEY_SIZE];
 
@@ -30,10 +29,16 @@ pub struct Entry {
     pub value: AST,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Copy)]
 pub struct Level {
     size: usize,
-    entries: [Entry; DICT_CAPACITY],
+    entries: [Entry; CAPACITY],
+}
+
+impl Clone for Level {
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 
 impl Level {
@@ -43,14 +48,14 @@ impl Level {
             entries: [Entry {
                 key: [0u8; KEY_SIZE],
                 value: AST::Nil,
-            }; DICT_CAPACITY],
+            }; CAPACITY],
         }
     }
 
     pub fn insert(&mut self, key: Key, value: AST) -> Result<(), Error> {
         let idx = self.size;
         match idx {
-            DICT_CAPACITY => Err(Error::Capacity),
+            CAPACITY => Err(Error::Capacity),
             _ => {
                 self.entries[idx] = Entry {
                     key: key,
@@ -81,27 +86,34 @@ impl fmt::Display for Level {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Copy)]
 pub struct Environment {
     pub size: usize,
-    pub levels: [Level; ENV_CAPACITY],
+    pub levels: [Level; CAPACITY],
+}
+
+impl Clone for Environment {
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 
 impl Environment {
     pub fn new() -> Self {
         Environment {
             size: 1,
-            levels: [Level::new(); ENV_CAPACITY],
+            levels: [Level::new(); CAPACITY],
         }
     }
 
     pub fn new_child(&mut self) -> Result<&mut Level, Error> {
         let id = &mut self.size;
         match *id {
-            ENV_CAPACITY => Err(Error::Capacity),
+            CAPACITY => Err(Error::Capacity),
             _ => {
+                let l = &mut self.levels[*id];
                 *id += 1;
-                Ok(&mut self.levels[*id])
+                Ok(l)
             }
         }
     }
