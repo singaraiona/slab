@@ -23,10 +23,16 @@ pub enum Error {
     Capacity,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Copy)]
 pub struct Entry {
     pub key: Key,
     pub value: AST,
+}
+
+impl Clone for Entry {
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 
 #[derive(Copy)]
@@ -102,7 +108,13 @@ impl Environment {
     pub fn new() -> Self {
         Environment {
             size: 1,
-            levels: [Level::new(); CAPACITY],
+            levels: [Level {
+                size: 1,
+                entries: [Entry {
+                    key: [0u8; KEY_SIZE],
+                    value: AST::Nil,
+                }; CAPACITY],
+            }; CAPACITY],
         }
     }
 
