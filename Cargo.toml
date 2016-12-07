@@ -1,0 +1,6 @@
+[package]
+name = "slab"
+version = "0.1.0"
+authors = ["Anton Kundenko <anton@algotradinghub.com>"]
+
+[dependencies]
