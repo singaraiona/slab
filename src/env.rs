@@ -23,16 +23,10 @@ pub enum Error {
     Capacity,
 }
 
-#[derive(Debug, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Entry {
     pub key: Key,
     pub value: AST,
-}
-
-impl Clone for Entry {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 #[derive(Copy)]
@@ -110,13 +104,12 @@ impl Environment {
     }
 
     pub fn new_child(&mut self) -> Result<&mut Level, Error> {
-        let id = &mut self.size;
-        match *id {
+        let id = self.size;
+        match id {
             CAPACITY => Err(Error::Capacity),
             _ => {
-                let l = &mut self.levels[*id];
-                *id += 1;
-                Ok(l)
+                self.size += 1;
+                Ok(&mut self.levels[id])
             }
         }
     }
