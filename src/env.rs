@@ -92,29 +92,20 @@ impl fmt::Display for Level {
     }
 }
 
-#[derive(Copy)]
 pub struct Environment {
     pub size: usize,
-    pub levels: [Level; CAPACITY],
-}
-
-impl Clone for Environment {
-    fn clone(&self) -> Self {
-        *self
-    }
+    pub levels: Vec<Level>,
 }
 
 impl Environment {
     pub fn new() -> Self {
+        let mut v = Vec::with_capacity(CAPACITY);
+        for _ in 0..CAPACITY {
+            v.push(Level::new());
+        }
         Environment {
             size: 1,
-            levels: [Level {
-                size: 1,
-                entries: [Entry {
-                    key: [0u8; KEY_SIZE],
-                    value: AST::Nil,
-                }; CAPACITY],
-            }; CAPACITY],
+            levels: v,
         }
     }
 
