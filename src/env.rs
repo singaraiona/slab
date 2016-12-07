@@ -1,16 +1,10 @@
 // #
-//
 // env.rs
-// Copyright (C) 2016 Lynx ltd. <anton@algotradinghub.com>
-// Created by Anton Kundenko.
-//
 
 use std::fmt;
 
-const KEY_SIZE: usize = 16;
 const CAPACITY: usize = 2048;
-
-pub type Key = [u8; KEY_SIZE];
+pub type Key = u16;
 
 #[derive(Debug, Clone, Copy)]
 pub enum AST {
@@ -46,7 +40,7 @@ impl Level {
         Level {
             size: 1,
             entries: [Entry {
-                key: [0u8; KEY_SIZE],
+                key: 0,
                 value: AST::Nil,
             }; CAPACITY],
         }
