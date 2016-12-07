@@ -8,7 +8,7 @@
 use std::fmt;
 
 const KEY_SIZE: usize = 16;
-const CAPACITY: usize = 512;
+const CAPACITY: usize = 2048;
 
 pub type Key = [u8; KEY_SIZE];
 
@@ -53,11 +53,11 @@ impl Level {
     }
 
     pub fn insert(&mut self, key: Key, value: AST) -> Result<(), Error> {
-        let idx = self.size;
-        match idx {
+        let last = self.size;
+        match last {
             CAPACITY => Err(Error::Capacity),
             _ => {
-                self.entries[idx] = Entry {
+                self.entries[last - 1] = Entry {
                     key: key,
                     value: value,
                 };
@@ -104,12 +104,12 @@ impl Environment {
     }
 
     pub fn new_child(&mut self) -> Result<&mut Level, Error> {
-        let id = self.size;
-        match id {
+        let last = self.size;
+        match last {
             CAPACITY => Err(Error::Capacity),
             _ => {
                 self.size += 1;
-                Ok(&mut self.levels[id])
+                Ok(&mut self.levels[last])
             }
         }
     }
